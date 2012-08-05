@@ -1,0 +1,15 @@
+form.form-horizontal(action="/{{path}}" + (object.isNew ? "" : "/" + object.id), method="post")
+  if !object.isNew
+    input(type="hidden", name="_method", value="put")
+  fieldset
+    {{#types}}
+    .control-group
+      label.control-label(for="{{name}}") {{title}}
+      .controls
+        {{{control}}}
+    {{/types}}
+  
+    .form-actions
+      button.btn.btn-primary(type="submit")= object.isNew ? "Create {{name}}" : "Update {{name}}"
+      &nbsp;
+      a.btn(href="/{{path}}") Cancel

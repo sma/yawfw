@@ -1,0 +1,8 @@
+extends base
+block content
+  each object in objects
+    .page-header
+      h1= object.title
+        =" "
+        small= object.created
+    div!= markdown(object.content)

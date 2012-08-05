@@ -1,0 +1,10 @@
+extends ../base
+block content
+  .page-header
+    h1 {{name}} 
+      small= object.id
+  {{#types}}
+  p <strong>{{title}}:</strong> #{object.{{name}}}
+  {{/types}}
+  
+  a.btn(href="/{{path}}") Back

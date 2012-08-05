@@ -1,0 +1,12 @@
+extends ../base
+block content
+  .page-header
+    h1 Post 
+      small= object.id
+    
+  p <strong>Title:</strong> #{object.title}
+  p <strong>Content:</strong>
+    blockquote !{markdown(object.content)}
+  p <strong>Created:</strong> #{object.created}
+  
+  a.btn(href="/posts") Back

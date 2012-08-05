@@ -1,0 +1,24 @@
+!!! 5
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport", content="width=device-width,initial-scale=1")
+    link(href="/bootstrap.min.css", rel="stylesheet")
+    title= title
+    style
+      body { padding-top: 60px; }
+  body
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container
+          a.brand(href="/")= title
+          .nav-collapse
+            ul.nav
+              li
+                a(href="/") Home
+              li
+                a(href="/posts") Posts
+              li
+                a(href="#") About
+    .container
+      block content

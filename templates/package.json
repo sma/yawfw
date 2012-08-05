@@ -1,0 +1,8 @@
+{
+  "name": "{{name}}",
+  "version": "0.0.0",
+  "description": "describe {{name}} here ...",
+  "dependencies": {
+    "yawfw": "*"
+  }
+}

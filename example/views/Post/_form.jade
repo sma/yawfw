@@ -1,0 +1,24 @@
+form.form-horizontal(action="/posts" + (object.isNew ? "" : "/" + object.id), method="post")
+  if !object.isNew
+    input(type="hidden", name="_method", value="put")
+  fieldset
+    .control-group
+      label.control-label(for="title") Title
+      .controls
+        input.input-xlarge(type="text", id="title", name="title", value=object.title)
+    
+    .control-group
+      label.control-label(for="content") Content
+      .controls
+        textarea.input-xlarge(rows="5", id="content", name="content")= object.content
+    
+    .control-group
+      label.control-label(for="content") Created
+      .controls
+        input.span2(type="text", id="created", name="created_date", value=date(object.created, "MMM DD, YYYY"))
+        input.span2(type="text", id="created", name="created_time", value=date(object.created, "HH:mm:ss"))
+  
+    .form-actions
+      button.btn.btn-primary(type="submit")= object.isNew ? "Create Post" : "Update Post"
+      &nbsp;
+      a.btn(href="/posts") Cancel

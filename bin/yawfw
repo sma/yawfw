@@ -1,0 +1,150 @@
+#!/usr/bin/env node
+
+var fs = require('fs'), spawn = require('child_process').spawn, hogan = require('hogan');
+
+var templates = __dirname + "/../templates/";
+
+function _usage(){
+  console.log("usage: yawfw new <dir>                         - create a new project");
+  console.log("       yawfw scaffold <Model> <name:type ...>  - add restful model");
+  console.log("       yawfw server                            - run the server");
+  process.exit(1);
+}
+
+// create a new project and copy template files
+function _new(name){
+  if (!name) _usage();
+  
+  mkdir(name);
+  copy("package.json");
+  copy("index.js");
+  mkdir(name + "/views");
+  copy("views/base.jade");
+  copy("views/index.jade");
+  mkdir(name + "/static");
+  copy("static/bootstrap.min.css");
+  
+  function mkdir(path){
+    if (!fs.existsSync(path)) fs.mkdirSync(path);
+  }
+  
+  function copy(filename){
+    var content = fs.readFileSync(templates + filename).toString();
+    content = hogan.compile(content).render({name: name});
+    fs.writeFileSync(name + "/" + filename, content);
+  }
+}
+
+// add restful model to existing project and copy template files
+function _scaffold(args){
+  var model = titlecase(args[0]);
+  var path = pluralize(model.toLowerCase());
+  var types = [];
+  
+  // construct model definition line
+  var s = "var " + model + " = fw.model(\"" + model + "\", { ";
+  for (var i = 1; i < args.length; i++){
+    var arg = args[i].split(/:/), 
+      name = arg[0], 
+      type = titlecase(arg[1] || "string");
+    types.push({ name:name, type:type, title: titleize(name), control: control(type, name) });
+    if (i > 1) s += ", ";
+    s += name + ": fw." + type;
+  }
+  s += " });\n";
+  
+  // construct resource definition line
+  var t = "app.use(fw.resource(\"/" + path + "\", " + model + "));\n";
+  
+  // add model definition and resource definition to "index.js"
+  var content = fs.readFileSync("index.js").toString();
+  var m = /\r?\n^var app/m.exec(content);
+  if (m){
+    content = content.substring(0, m.index) + s + content.substring(m.index);
+    fs.writeFileSync("index.js", content);
+  }
+  m = /\r?\n^app.listen/m.exec(content);
+  if (m){
+    content = content.substring(0, m.index) + t + content.substring(m.index);
+    fs.writeFileSync("index.js", content);
+  }
+  
+  // add path to "base.jade"
+  content = fs.readFileSync("views/base.jade").toString();
+  m = /^( *)  (a\(href="\/"\) Home\r?\n)/m.exec(content);
+  if (m){
+    content = content.substring(0, m.index + m[0].length) + 
+      m[1] + "li\n" + m[1] + "  a(href=\"/" + path + "\") " + titleize(pluralize(model)) + 
+      "\n" + content.substring(m.index + m[0].length);
+    fs.writeFileSync("views/base.jade", content);
+  }
+
+  // create scaffolding  
+  mkdir("views/" + model);
+  copy("index.jade");
+  copy("show.jade");
+  copy("edit.jade");
+  copy("new.jade");
+  copy("_form.jade");
+  
+  function titlecase(s){
+    return s[0].toUpperCase() + s.substring(1);
+  }
+  
+  function titleize(s){
+    return titlecase(s.replace(/(.)([A-Z])/, "$1 $2"));
+  }
+  
+  function pluralize(s){
+    if (s === "person") return "people";
+    if (/[^aeiou]y$/.test(s)) return s.substring(0, s.length - 1) + "ies";
+    return s + "s";
+  }
+  
+  function mkdir(path){
+    if (!fs.existsSync(path)) fs.mkdirSync(path);
+  }
+  
+  function copy(filename){
+    var content = fs.readFileSync(templates + "views/model/" + filename).toString();
+    content = hogan.compile(content).render({
+      name: titleize(model), 
+      namePlural: titleize(pluralize(model)),
+      types: types,
+      path: path
+    });
+    fs.writeFileSync("views/" + model + "/" + filename, content);
+  }
+  
+  function control(type, name){
+    switch (type.toLowerCase()){
+      case 'string':
+      case 'number':
+        return h('input.input-xlarge(type="text", id="{{name}}", name="{{name}}", value=object.{{name}})');
+      case 'text':
+        return h('textarea.input-xlarge(rows="6", id="{{name}}", name="{{name}}")= object.{{name}}');
+      case 'date':
+        return h('div\n' + 
+          '            input.span2(type="text", id="{{name}}", name="{{name}}_date", value=date(object.{{name}}, "MMM DD, YYYY"))\n' + 
+          '            input.span2(type="time", id="{{name}}", name="{{name}}_time", value=date(object.{{name}}, "HH:mm:ss"))');
+    }
+  }
+  
+  function h(s){ return hogan.compile(s).render({name: name}); }
+}
+
+// run server (either nodemon or simply node)
+function _server(){
+  spawn("nodemon", ["index.js"], {cwd: process.cwd, stdio: "inherit"}).on("exit", function(){
+    spawn("node", ["index.js"], {cwd: process.cwd, stdio: "inherit"});
+  });
+}
+
+if (process.argv.length < 3) _usage();
+
+switch (process.argv[2]){
+  case 'new': _new(process.argv[3]); break;
+  case 'scaffold': _scaffold(process.argv.slice(3)); break;
+  case 'server': _server(); break;
+  default: _usage();
+}

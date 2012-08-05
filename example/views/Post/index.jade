@@ -1,0 +1,26 @@
+extends ../base
+block content
+  .page-header
+    h1 Posts 
+      small a list of all objects
+  table.table.table-bordered
+    tr
+      th Title
+      th Content
+      th Created
+      th
+    each object in objects
+      tr
+        td= object.title
+        td= object.content
+        td= object.created
+        td(nowrap)
+          a.btn.btn-mini(href="/posts/" + object.id) Show
+          &nbsp;
+          a.btn.btn-mini(href="/posts/" + object.id + "/edit") Edit
+          &nbsp;
+          form(action="/posts/" + object.id, method="post", style="display:inline")
+            input(type="hidden", name="_method", value="delete")
+            input.btn.btn-danger.btn-mini(type="submit", value="Delete")
+  
+  a.btn(href="/posts/new") New Post
