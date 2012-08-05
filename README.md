@@ -17,28 +17,28 @@ A thin layer above express, jade and mongoose using Twitter bootstrap and marked
 
 ## Example script
 
-    ```js
-    var fw = require('yawfw');
-    
-    var Post = fw.model("Post", { title: fw.String, content: fw.Text, created: fw.Date });
-    
-    var app = fw.app("mongodb://localhost/blog", {title: "Blog"});
-    
-    app.get("/", fw.find(Post.where().limit(3).desc('created')), fw.render('blog'));
-    app.use(fw.resource("/posts", Post));
-    
-    app.listen(process.env.PORT || 3000);
-    ```
+```js
+var fw = require('yawfw');
+
+var Post = fw.model("Post", { title: fw.String, content: fw.Text, created: fw.Date });
+
+var app = fw.app("mongodb://localhost/blog", {title: "Blog"});
+
+app.get("/", fw.find(Post.where().limit(3).desc('created')), fw.render('blog'));
+app.use(fw.resource("/posts", Post));
+
+app.listen(process.env.PORT || 3000);
+```
 
 ## API
 
 ### `fw.app(uri, locals)`
 
-Create a new express app, initialized for using jade templates from the current directory's `views` folder and static files from the current directory's `static` folder. The `uri` argument is used to initialize mongoose. The optional `locals` object contains constants and helper functions which can be used in jade template. By default, these locals are defined:
+Create a new express app, initialized for using jade templates from the current directory's `views` folder and static files from the current directory's `static` folder. The `uri` argument is used to initialize mongoose. The optional `locals` object contains constants and helper functions which can be used in jade templates. By default, these locals are defined:
 
 * `title` - a meaningless title used in the `base.jade`
-* `markdown()` - a function to convert a given string to markdown format (using marked)
-* `date()` - a function to convert a given date object to the given format string (using moment) 
+* `markdown(s)` - a function to convert a given string to markdown format (using marked)
+* `date(d, f)` - a function to convert a given date object to the given format string (using moment) 
 
 ### `fw.model(name, options)`
 
@@ -61,7 +61,7 @@ Express middleware function to populate the request's `object` property with the
 
 ### `fw.render(name)`
 
-Express middleware function to render the given jade template, populating the template's context with `objects` and `object` as well as all locals defined in `fw.app()`.
+Express middleware function to render the given jade template, populating the template's context with `objects` and `object` as well as all locals defined via `fw.app()`.
 
 ### `fw.redirect(path)`
 
