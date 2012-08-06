@@ -12,7 +12,7 @@ A thin layer above express, jade and mongoose using Twitter bootstrap and marked
     $ yawfw new blog
     $ cd blog
     $ npm install
-    $ yawfw scaffold Post title:string content:text created:date
+    $ yawfw scaffold Post title:string content:text created:date published:boolean
     $ yawfw server
 
 ## Example script
@@ -20,11 +20,11 @@ A thin layer above express, jade and mongoose using Twitter bootstrap and marked
 ```js
 var fw = require('yawfw');
 
-var Post = fw.model("Post", { title: fw.String, content: fw.Text, created: fw.Date });
+var Post = fw.model("Post", { title: 'string', content: 'text', created: 'date', published: 'boolean' });
 
 var app = fw.app("mongodb://localhost/blog", {title: "Blog"});
 
-app.get("/", fw.find(Post.where().limit(3).desc('created')), fw.render('blog'));
+app.get("/", fw.find(Post.where("published", true).limit(3).desc('created')), fw.render('blog'));
 app.use(fw.resource("/posts", Post));
 
 app.listen(process.env.PORT || 3000);
@@ -44,10 +44,11 @@ Create a new express app, initialized for using jade templates from the current 
 
 Create a mongoose model based on the following types:
 
-* `fw.String` - a single line string
-* `fw.Text` - a multiline string
-* `fw.Number` - a number
-* `fw.Date` - a datetime
+* `string` - a single line string
+* `text` - a multiline string
+* `number` - a number
+* `boolean` - a Boolean
+* `date` - a datetime
 
 All other parameters are passed to mongoose.
 

@@ -6,9 +6,26 @@ form.form-horizontal(action="/{{path}}" + (object.isNew ? "" : "/" + object.id),
     .control-group
       label.control-label(for="{{name}}") {{title}}
       .controls
-        {{{control}}}
+        {{#string?}}
+        input.input-xlarge(type="text", id="{{name}}", name="{{name}}", value=object.{{name}})
+        {{/string?}}
+        {{#text?}}
+        textarea.input-xlarge(rows="6", id="{{name}}", name="{{name}}")= object.{{name}}
+        {{/text?}}
+        {{#number?}}
+        input.span1(type="text", id="{{name}}", name="{{name}}", value=object.{{name}})
+        {{/number?}}
+        {{#boolean?}}
+        label.checkbox
+          input(type="checkbox", id="{{name}}", name="{{name}}", checked=object.{{name}})
+          | {{label}}
+        {{/boolean?}}
+        {{#date?}}
+        input.span2(type="text", id="{{name}}", name="{{name}}_date", value=date(object.{{name}}, "MMM DD, YYYY"))
+        input.span2(type="time", id="{{name}}", name="{{name}}_time", value=date(object.{{name}}, "HH:mm:ss"))
+        {{/date?}}
+        {{#helptext}}p.help-block {{helptext}}{{/helptext}}
     {{/types}}
-  
     .form-actions
       button.btn.btn-primary(type="submit")= object.isNew ? "Create {{name}}" : "Update {{name}}"
       &nbsp;

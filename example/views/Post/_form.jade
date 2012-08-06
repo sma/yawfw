@@ -13,11 +13,18 @@ form.form-horizontal(action="/posts" + (object.isNew ? "" : "/" + object.id), me
         textarea.input-xlarge(rows="5", id="content", name="content")= object.content
     
     .control-group
-      label.control-label(for="content") Created
+      label.control-label(for="created") Created
       .controls
         input.span2(type="text", id="created", name="created_date", value=date(object.created, "MMM DD, YYYY"))
         input.span2(type="text", id="created", name="created_time", value=date(object.created, "HH:mm:ss"))
-  
+    
+    .control-group
+      label.control-label(for="published") Published
+      .controls
+        label.checkbox
+          input(type="checkbox", id="published", name="published", checked=object.published)
+          | publish this post
+    
     .form-actions
       button.btn.btn-primary(type="submit")= object.isNew ? "Create Post" : "Update Post"
       &nbsp;

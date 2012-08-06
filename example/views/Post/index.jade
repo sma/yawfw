@@ -8,12 +8,14 @@ block content
       th Title
       th Content
       th Created
+      th Published
       th
     each object in objects
       tr
         td= object.title
         td= object.content
         td= object.created
+        td= object.published
         td(nowrap)
           a.btn.btn-mini(href="/posts/" + object.id) Show
           &nbsp;

@@ -42,14 +42,15 @@ function _scaffold(args){
   var types = [];
   
   // construct model definition line
-  var s = "var " + model + " = fw.model(\"" + model + "\", { ";
+  var s = "var " + model + " = fw.model('" + model + "', { ";
   for (var i = 1; i < args.length; i++){
     var arg = args[i].split(/:/), 
       name = arg[0], 
-      type = titlecase(arg[1] || "string");
-    types.push({ name:name, type:type, title: titleize(name), control: control(type, name) });
+      type = arg[1] || "string";
+    types.push({ name:name, type:type, title: titleize(name) });
+    types[types.length - 1][type + "?"] = true;
     if (i > 1) s += ", ";
-    s += name + ": fw." + type;
+    s += name + ": '" + type + "'";
   }
   s += " });\n";
   
@@ -115,22 +116,6 @@ function _scaffold(args){
     });
     fs.writeFileSync("views/" + model + "/" + filename, content);
   }
-  
-  function control(type, name){
-    switch (type.toLowerCase()){
-      case 'string':
-      case 'number':
-        return h('input.input-xlarge(type="text", id="{{name}}", name="{{name}}", value=object.{{name}})');
-      case 'text':
-        return h('textarea.input-xlarge(rows="6", id="{{name}}", name="{{name}}")= object.{{name}}');
-      case 'date':
-        return h('div\n' + 
-          '            input.span2(type="text", id="{{name}}", name="{{name}}_date", value=date(object.{{name}}, "MMM DD, YYYY"))\n' + 
-          '            input.span2(type="time", id="{{name}}", name="{{name}}_time", value=date(object.{{name}}, "HH:mm:ss"))');
-    }
-  }
-  
-  function h(s){ return hogan.compile(s).render({name: name}); }
 }
 
 // run server (either nodemon or simply node)

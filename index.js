@@ -3,6 +3,16 @@ var express = require("express"),
   marked = require("marked"), 
   moment = require("moment");
 
+var datatypes = {
+  string: String,
+  text: String,
+  markdown: String,
+  number: Number,
+  integer: Number,
+  boolean: Boolean,
+  date: Date
+};
+
 /**
  * Defines a new mongoose model.
  * @param name {String} model name
@@ -12,29 +22,17 @@ exports.model = function(name, options){
   var types = {};
   for (var key in options){
     var type = options[key];
-    if(type.type){
-      options[key].type = type.type.mongooseType;
+    if(typeof type.type === "string"){
+      options[key].type = datatypes[type.type];
       types[key] = type.type;
-    }else{
-      options[key] = type.mongooseType;
+    }else if (typeof type === "string"){
+      options[key] = datatypes[type];
       types[key] = type;
+    }else{
+      types[key] = "object";
     }
   }
   return mongoose.model(name, new mongoose.Schema(options));
-};
-
-// datatype
-exports.String = {
-  mongooseType: String
-};
-exports.Text = {
-  mongooseType: String
-};
-exports.Number = {
-  mongooseType: Number
-};
-exports.Date = {
-  mongooseType: Date
 };
 
 /**
