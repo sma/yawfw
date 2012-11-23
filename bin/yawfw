@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var fs = require('fs'), spawn = require('child_process').spawn, hogan = require('hogan');
+var fs = require('fs'), spawn = require('child_process').spawn, hogan = require('hogan.js');
 
 var templates = __dirname + "/../templates/";
 

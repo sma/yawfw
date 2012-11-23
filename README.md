@@ -24,7 +24,7 @@ var Post = fw.model("Post", { title: 'string', content: 'text', created: 'date',
 
 var app = fw.app("mongodb://localhost/blog", {title: "Blog"});
 
-app.get("/", fw.find(Post.where("published", true).limit(3).desc('created')), fw.render('blog'));
+app.get("/", fw.find(Post.where("published", true).limit(3).sort('-created')), fw.render('blog'));
 app.use(fw.resource("/posts", Post));
 
 app.listen(process.env.PORT || 3000);
@@ -54,7 +54,7 @@ All other parameters are passed to mongoose.
 
 ### `fw.find(model)`
 
-Express middleware function to populate the request's `objects` property with all persistent instances of that model. You can also use mongoose query objects here, like for example `Customer.where({age: {$gt: 18}}).limit(10).asc('age')`. The `objects` property is passed to the jade template in `fw.render()`.
+Express middleware function to populate the request's `objects` property with all persistent instances of that model. You can also use mongoose query objects here, like for example `Customer.where({age: {$gt: 18}}).limit(10).sort('age')`. The `objects` property is passed to the jade template in `fw.render()`.
 
 ### `fw.findOne(model)`
 
