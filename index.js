@@ -102,7 +102,7 @@ function _findOne(model){
       req.object = object;
       next();
     });
-  }
+  };
 }
 
 // create a new instance of the given model
@@ -137,7 +137,7 @@ function _delete(){
       if (err){ return res.send(500); }
       next();
     });
-  }
+  };
 }
 
 // render the given template, providing the object/objects

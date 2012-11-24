@@ -1,0 +1,8 @@
+{
+  "es5": true,
+  "esnext": true,
+  "curly": false,
+  "undef": true,
+  "strict": false,
+  "node": true
+}

@@ -72,7 +72,7 @@ function _scaffold(args){
   
   // add path to "base.jade"
   content = fs.readFileSync("views/base.jade").toString();
-  m = /^( *)  (a\(href="\/"\) Home\r?\n)/m.exec(content);
+  m = /^( *) {2}(a\(href="\/"\) Home\r?\n)/m.exec(content);
   if (m){
     content = content.substring(0, m.index + m[0].length) + 
       m[1] + "li\n" + m[1] + "  a(href=\"/" + path + "\") " + titleize(pluralize(model)) + 
