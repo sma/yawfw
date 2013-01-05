@@ -12,7 +12,12 @@ block content
     each object in objects
       tr
         {{#types}}
+        {{^date?}}
         td= object.{{name}}
+        {{/date?}}
+        {{#date?}}
+        td= date(object.{{name}}, 'LLLL')
+        {{/date?}}
         {{/types}}
         td(nowrap)
           a.btn.btn-mini(href="/{{path}}/" + object.id) Show
